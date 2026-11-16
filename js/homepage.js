@@ -33,8 +33,9 @@ if (searchBtn) {
 
             if (!job) {
 
-                alert(
-                    "Please enter a job title."
+                showToast(
+                    "Please enter a job title.",
+                    "error"
                 );
 
                 return;
@@ -58,39 +59,61 @@ if (searchBtn) {
 }
 
 /* =====================================
-   CATEGORY CARD BUTTONS
+   CATEGORY CARDS
+   Clicking a card (or its arrow button)
+   goes to the Jobs page pre-filtered to
+   that category. Open-position counts
+   are pulled live from jobs.json so they
+   stay accurate as the data changes.
 ===================================== */
 
-const cardButtons =
-document.querySelectorAll(
-    ".card-footer button"
-);
+const categoryCards =
+document.querySelectorAll(".category-card");
 
-cardButtons.forEach(
-    (button) => {
+categoryCards.forEach(card => {
 
-        button.addEventListener(
-            "click",
-            function () {
+    const category = card.dataset.category;
 
-                const card =
-                this.closest(
-                    ".category-card"
-                );
+    if (!category) return;
 
-                if (!card) return;
+    card.addEventListener("click", () => {
 
-                const category =
-                card
-                .querySelector("h3")
-                .textContent;
+        window.location.href =
+        `Jobs.html?category=${encodeURIComponent(category)}`;
 
-                alert(
-                    `Opening ${category} jobs`
-                );
+    });
 
-            }
+});
+
+fetch("../data/jobs.json")
+    .then(response => response.json())
+    .then(jobs => {
+
+        categoryCards.forEach(card => {
+
+            const category = card.dataset.category;
+            const countEl = card.querySelector(".open-count");
+
+            if (!category || !countEl) return;
+
+            const count =
+            jobs.filter(
+                job => (job.category || "").toLowerCase() === category
+            ).length;
+
+            countEl.textContent =
+            count === 1
+            ? "1 Open Position"
+            : `${count} Open Positions`;
+
+        });
+
+    })
+    .catch(error => {
+
+        console.error(
+            "Failed to load job counts:",
+            error
         );
 
-    }
-);
+    });

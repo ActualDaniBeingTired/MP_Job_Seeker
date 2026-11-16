@@ -43,27 +43,17 @@
       Join Now
     </a>
 
-  </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+</nav>
 
   <!-- HERO -->
 
   <section class="hero">
-
-    <!-- LEFT HERO IMAGE -->
-
-    <img 
-      src="../Pic/doctor.png" 
-      alt="Doctor"
-      class="doctor-img"
-    >
-
-    <!-- RIGHT HERO IMAGE -->
-
-    <img 
-      src="../Pic/hospital.png" 
-      alt="Hospital"
-      class="hospital-img"
-    >
 
     <!-- HERO CONTENT -->
 
@@ -85,7 +75,7 @@
         <div class="input-group">
 
           <img 
-            src="../Icons/job.png" 
+            src="../Icons/career.png" 
             alt="Job Icon"
           >
 
@@ -100,7 +90,7 @@
         <div class="input-group">
 
           <img 
-            src="../Icons/location.png" 
+            src="../Icons/location-pin.png" 
             alt="Location Icon"
           >
 
@@ -146,7 +136,7 @@
 
       <!-- CARD 1 -->
 
-      <div class="category-card">
+      <div class="category-card" data-category="doctor">
 
         <div class="icon-box">
 
@@ -174,7 +164,7 @@
               alt="User"
             >
 
-            <span>
+            <span class="open-count">
               48+ Open Position
             </span>
 
@@ -195,12 +185,12 @@
 
       <!-- CARD 2 -->
 
-      <div class="category-card">
+      <div class="category-card" data-category="nurse">
 
         <div class="icon-box">
 
           <img 
-            src="../Icons/Nurse.png" 
+            src="../Icons/nurse.png" 
             alt="Nurse"
           >
 
@@ -223,7 +213,7 @@
               alt="User"
             >
 
-            <span>
+            <span class="open-count">
               48+ Open Position
             </span>
 
@@ -244,7 +234,7 @@
 
       <!-- CARD 3 -->
 
-      <div class="category-card">
+      <div class="category-card" data-category="pharmacist">
 
         <div class="icon-box">
 
@@ -272,7 +262,7 @@
               alt="User"
             >
 
-            <span>
+            <span class="open-count">
               48+ Open Position
             </span>
 
@@ -293,7 +283,7 @@
 
       <!-- CARD 4 -->
 
-      <div class="category-card">
+      <div class="category-card" data-category="midwife">
 
         <div class="icon-box">
 
@@ -321,7 +311,7 @@
               alt="User"
             >
 
-            <span>
+            <span class="open-count">
               48+ Open Position
             </span>
 
@@ -342,9 +332,9 @@
 
     </div>
 
-    <button class="view-btn">
+    <a href="Jobs.html" class="view-btn">
       View All Category
-    </button>
+    </a>
 
   </section>
   
@@ -352,11 +342,6 @@
 
   <!-- WHY CHOOSE -->
   <section class="why-section">
-    <img 
-      src="../Pic/Waves.jpeg" 
-      alt="Wave Background"
-      class="wave-bg"
-    >
 
     <h2>
       Why choose MP
@@ -417,7 +402,7 @@
         <div class="why-icon">
 
           <img 
-            src="../Icons/easy application.png" 
+            src="../Icons/easy-application.png" 
             alt="Easy Application"
           >
 
@@ -440,61 +425,61 @@
 
   <footer>
 
-    <div class="footer-container">
+    <div class="footer-top">
 
-      <div class="footer-column">
+      <div class="footer-brand">
 
-        <h3>
-          General
-        </h3>
+        <h2 class="footer-logo">MP</h2>
 
-        <a href="#">Home</a>
-        <a href="#">Jobs</a>
-        <a href="#">About Us</a>
-        <a href="#">Contact</a>
+        <p>
+          Connecting healthcare professionals with trusted
+          hospitals and institutions across Indonesia.
+        </p>
 
       </div>
 
       <div class="footer-column">
 
-        <h3>
-          Browse
-        </h3>
+        <h3>Quick Links</h3>
 
-        <a href="#">Jobs</a>
-        <a href="#">Top Companies</a>
-        <a href="#">Top Payments</a>
-
-      </div>
-
-      <div class="footer-column">
-
-        <h3>
-          About MP
-        </h3>
-
-        <a href="../html/AboutUs.html">About Us</a>
-        <a href="../html/Contact.html">Contact </a>
-        <a href="../html/Jobs.html">Jobs</a>
         <a href="../html/HomePage.html">Home</a>
+        <a href="../html/Jobs.html">Browse Jobs</a>
+        <a href="../html/AboutUs.html">About Us</a>
+        <a href="../html/Contact.html">Contact</a>
 
       </div>
 
       <div class="footer-column">
 
-        <h3>
-          Contact Center
-        </h3>
+        <h3>For Job Seekers</h3>
 
-        <div class="contact-box">
-          119-150
-        </div>
-
-        <div class="contact-box">
-          02891389137923
-        </div>
+        <a href="../html/Jobs.html">Find a Job</a>
+        <a href="../html/Registration.html">Create Account</a>
+        <a href="../html/SignIn.html">Sign In</a>
 
       </div>
+
+      <div class="footer-column footer-contact">
+
+        <h3>Contact Us</h3>
+
+        <a href="tel:119150">
+          <img src="../Icons/phone-call.png" alt="">
+          119-150
+        </a>
+
+        <a href="mailto:support@medicalportal.id">
+          <img src="../Icons/empty-email.png" alt="">
+          support@medicalportal.id
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+      <p>&copy; 2026 Medical Portal. All rights reserved.</p>
 
     </div>
 
@@ -502,7 +487,6 @@
 
   <script src="../js/common.js"></script>
   <script src="../js/homepage.js"></script>
-  <script src="../js/profile.js"></script>
   <script src="../js/auth.js"></script>
 </body>
 </html>

@@ -10,8 +10,6 @@
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/navbar.css">
   <link rel="stylesheet" href="../css/footer.css">
-  <link rel="stylesheet" href="../css/profile.css">
-  <link rel="stylesheet" href="../css/profile.css">
   <link rel="stylesheet" href="../css/registration.css">
 
   <link
@@ -47,7 +45,13 @@
       Join Now
     </a>
 
-  </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+</nav>
 
   <!-- REGISTER SECTION -->
 
@@ -56,7 +60,7 @@
     <!-- WAVE BACKGROUND -->
 
     <img
-      src="../Pic/Registration.png"
+      src="../banner/RegistrationBanner.png"
       class="top-wave"
       alt="Top Wave"
     >
@@ -75,7 +79,7 @@
         <div class="section-title">
 
           <div class="title-icon">
-            <img src="../Icons/resume (1).png" alt="">
+            <img src="../Icons/resume.png" alt="">
           </div>
 
           <h2>Personal Information</h2>
@@ -169,7 +173,7 @@
 
           <div class="input-box">
 
-            <img src="../Icons/placeholder.png" alt="">
+            <img src="../Icons/location-pin.png" alt="">
 
             <input
               type="text"
@@ -298,53 +302,61 @@
 
   <footer>
 
-    <div class="footer-container">
+    <div class="footer-top">
 
-      <div class="footer-column">
+      <div class="footer-brand">
 
-        <h3>General</h3>
+        <h2 class="footer-logo">MP</h2>
 
-        <a href="#">Home</a>
-        <a href="#">Jobs</a>
-        <a href="#">About Us</a>
-        <a href="#">Contact</a>
-
-      </div>
-
-      <div class="footer-column">
-
-        <h3>Browse</h3>
-
-        <a href="#">Jobs</a>
-        <a href="#">Top Companies</a>
-        <a href="#">Top Payments</a>
+        <p>
+          Connecting healthcare professionals with trusted
+          hospitals and institutions across Indonesia.
+        </p>
 
       </div>
 
       <div class="footer-column">
 
-        <h3>About MJ</h3>
+        <h3>Quick Links</h3>
 
-        <a href="../html/AboutUs.html">About Us</a>
-        <a href="../html/Contact.html">Career</a>
-        <a href="../html/Jobs.html">Contact Us</a>
         <a href="../html/HomePage.html">Home</a>
+        <a href="../html/Jobs.html">Browse Jobs</a>
+        <a href="../html/AboutUs.html">About Us</a>
+        <a href="../html/Contact.html">Contact</a>
 
       </div>
 
       <div class="footer-column">
 
-        <h3>Contact Center</h3>
+        <h3>For Job Seekers</h3>
 
-        <div class="contact-box">
-          119-150
-        </div>
-
-        <div class="contact-box">
-          02891389137923
-        </div>
+        <a href="../html/Jobs.html">Find a Job</a>
+        <a href="../html/Registration.html">Create Account</a>
+        <a href="../html/SignIn.html">Sign In</a>
 
       </div>
+
+      <div class="footer-column footer-contact">
+
+        <h3>Contact Us</h3>
+
+        <a href="tel:119150">
+          <img src="../Icons/phone-call.png" alt="">
+          119-150
+        </a>
+
+        <a href="mailto:support@medicalportal.id">
+          <img src="../Icons/empty-email.png" alt="">
+          support@medicalportal.id
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+      <p>&copy; 2026 Medical Portal. All rights reserved.</p>
 
     </div>
 

@@ -20,6 +20,11 @@ document.getElementById(
     "applicationTab"
 );
 
+const savedTab =
+document.getElementById(
+    "savedTab"
+);
+
 const tabButtons =
 document.querySelectorAll(
     ".tab-btn"
@@ -35,7 +40,7 @@ document.getElementById(
     "editProfileBtn"
 );
 
-const closeModal =
+const profileModalCloseBtn =
 document.querySelector(
     ".close-modal"
 );
@@ -104,7 +109,7 @@ function loadProfile() {
             certifications: [],
 
             profileImage:
-            "../Images/default-profile.png"
+            "../Icons/person.png"
 
         };
 
@@ -203,23 +208,16 @@ function renderSkills() {
         "skillsContainer"
     );
 
-    container.innerHTML = "";
+    if (!container) return;
 
-    profileData.skills.forEach(
-        skill => {
-
-            container.innerHTML += `
-
-            <span class="tag">
-
-                ${skill}
-
-            </span>
-
-            `;
-
-        }
-    );
+    container.innerHTML =
+    profileData.skills
+    .map(skill => `
+        <span class="tag">
+            ${escapeHtml(skill)}
+        </span>
+    `)
+    .join("");
 
 }
 
@@ -234,23 +232,16 @@ function renderCertifications() {
         "certificationContainer"
     );
 
-    container.innerHTML = "";
+    if (!container) return;
 
-    profileData.certifications.forEach(
-        cert => {
-
-            container.innerHTML += `
-
-            <span class="tag">
-
-                ${cert}
-
-            </span>
-
-            `;
-
-        }
-    );
+    container.innerHTML =
+    profileData.certifications
+    .map(cert => `
+        <span class="tag">
+            ${escapeHtml(cert)}
+        </span>
+    `)
+    .join("");
 
 }
 
@@ -283,45 +274,71 @@ function renderApplications() {
 
     if (!container) return;
 
-    container.innerHTML = "";
+    if (applicationData.length === 0) {
 
-    applicationData.forEach(
-        app => {
+        container.innerHTML = `
+            <div class="empty-state">
+                <img src="../Icons/resume.png" alt="">
+                <h3>No applications yet</h3>
+                <p>Jobs you apply to will show up here so you can track their status.</p>
+                <a href="../html/Jobs.html" class="empty-state-btn">Browse Jobs</a>
+            </div>
+        `;
 
-            container.innerHTML += `
+        updateStats();
+        return;
 
-            <div class="application-card">
+    }
 
-                <h3>
-                    ${app.jobTitle}
-                </h3>
+    container.innerHTML =
+    applicationData.map(app => `
+        <div class="application-card">
 
-                <p>
-                    ${app.company}
-                </p>
+            <div class="application-icon">
+                <img src="../Icons/career.png" alt="">
+            </div>
 
-                <p>
-                    ${app.location}
-                </p>
+            <div class="application-info">
 
-                <p>
-                    ${app.salary}
-                </p>
+                <div class="application-top">
 
-                <span
-                    class="status ${app.status.toLowerCase()}"
-                >
+                    <div>
+                        <h3>
+                            ${escapeHtml(app.jobTitle)}
+                        </h3>
 
-                    ${app.status}
+                        <p class="application-company">
+                            ${escapeHtml(app.company)}
+                        </p>
+                    </div>
 
-                </span>
+                    <span
+                        class="status ${escapeHtml((app.status || "").toLowerCase())}"
+                    >
+                        ${escapeHtml(app.status)}
+                    </span>
+
+                </div>
+
+                <div class="application-meta">
+
+                    <span>
+                        <img src="../Icons/location-pin.png" alt="">
+                        ${escapeHtml(app.location)}
+                    </span>
+
+                    <span>
+                        <img src="../Icons/wallet.png" alt="">
+                        ${escapeHtml(app.salary)}
+                    </span>
+
+                </div>
 
             </div>
 
-            `;
-
-        }
-    );
+        </div>
+    `)
+    .join("");
 
     updateStats();
 
@@ -330,6 +347,148 @@ function renderApplications() {
 /* =========================
    STATS
 ========================= */
+
+function renderSavedJobs() {
+
+    const container =
+    document.getElementById("savedJobsContainer");
+
+    if (!container) return;
+
+    const savedIds =
+    JSON.parse(
+        localStorage.getItem("savedJobs")
+    ) || [];
+
+    if (savedIds.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-state">
+                <img src="../Icons/bookmark.png" alt="">
+                <h3>No saved jobs yet</h3>
+                <p>Bookmark jobs you're interested in and they'll show up here.</p>
+                <a href="../html/Jobs.html" class="empty-state-btn">Browse Jobs</a>
+            </div>
+        `;
+
+        return;
+
+    }
+
+    container.innerHTML = `<p class="saved-loading">Loading saved jobs...</p>`;
+
+    fetch("../data/jobs.json")
+        .then(response => response.json())
+        .then(allJobs => {
+
+            const savedJobs =
+            allJobs.filter(
+                job => savedIds.includes(job.id)
+            );
+
+            if (savedJobs.length === 0) {
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="../Icons/bookmark.png" alt="">
+                        <h3>No saved jobs yet</h3>
+                        <p>Bookmark jobs you're interested in and they'll show up here.</p>
+                        <a href="../html/Jobs.html" class="empty-state-btn">Browse Jobs</a>
+                    </div>
+                `;
+
+                return;
+
+            }
+
+            container.innerHTML =
+            savedJobs.map(job => `
+                <div class="application-card">
+
+                    <div class="application-icon">
+                        <img src="${escapeHtml(job.icon)}" alt="">
+                    </div>
+
+                    <div class="application-info">
+
+                        <div class="application-top">
+
+                            <div>
+                                <h3>
+                                    ${escapeHtml(job.title)}
+                                </h3>
+
+                                <p class="application-company">
+                                    ${escapeHtml(job.company)}
+                                </p>
+                            </div>
+
+                            <button
+                                class="remove-saved-btn"
+                                data-id="${job.id}"
+                                title="Remove from saved"
+                            >
+                                &times;
+                            </button>
+
+                        </div>
+
+                        <div class="application-meta">
+
+                            <span>
+                                <img src="../Icons/location-pin.png" alt="">
+                                ${escapeHtml(job.location)}
+                            </span>
+
+                            <span>
+                                <img src="../Icons/wallet.png" alt="">
+                                ${escapeHtml(job.salary)}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `)
+            .join("");
+
+            container.querySelectorAll(".remove-saved-btn").forEach(btn => {
+
+                btn.addEventListener("click", () => {
+
+                    const id = Number(btn.dataset.id);
+
+                    const updated =
+                    (JSON.parse(localStorage.getItem("savedJobs")) || [])
+                    .filter(item => item !== id);
+
+                    localStorage.setItem(
+                        "savedJobs",
+                        JSON.stringify(updated)
+                    );
+
+                    if (typeof showToast === "function") {
+
+                        showToast("Removed from saved jobs.", "info");
+
+                    }
+
+                    updateStats();
+                    renderSavedJobs();
+
+                });
+
+            });
+
+        })
+        .catch(() => {
+
+            container.innerHTML = `<p class="saved-loading">Couldn't load saved jobs.</p>`;
+
+        });
+
+}
 
 function updateStats() {
 
@@ -367,6 +526,12 @@ function updateStats() {
    TAB SWITCHING
 ========================= */
 
+const tabPanels = {
+    profile: profileTab,
+    application: applicationTab,
+    saved: savedTab
+};
+
 tabButtons.forEach(button => {
 
     button.addEventListener(
@@ -388,27 +553,21 @@ tabButtons.forEach(button => {
             const tab =
             button.dataset.tab;
 
-            profileTab.classList.remove(
-                "active"
-            );
+            Object.values(tabPanels).forEach(panel => {
 
-            applicationTab.classList.remove(
-                "active"
-            );
+                if (panel) panel.classList.remove("active");
 
-            if (
-                tab === "profile"
-            ) {
+            });
 
-                profileTab.classList.add(
-                    "active"
-                );
+            if (tabPanels[tab]) {
 
-            } else {
+                tabPanels[tab].classList.add("active");
 
-                applicationTab.classList.add(
-                    "active"
-                );
+            }
+
+            if (tab === "saved") {
+
+                renderSavedJobs();
 
             }
 
@@ -477,9 +636,9 @@ if (editProfileBtn) {
    CLOSE MODAL
 ========================= */
 
-if (closeModal) {
+if (profileModalCloseBtn) {
 
-    closeModal.onclick = () => {
+    profileModalCloseBtn.onclick = () => {
 
         editModal.classList.remove(
             "active"
@@ -628,8 +787,9 @@ if (saveProfileBtn) {
             "active"
         );
 
-        alert(
-            "Profile updated successfully!"
+        showToast(
+            "Profile updated successfully!",
+            "success"
         );
 
     };

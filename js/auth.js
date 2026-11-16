@@ -300,7 +300,7 @@ document.addEventListener(
 
             savedProfile?.profileImage ||
 
-            "../Images/default-profile.png";
+            "../Icons/person.png";
 
         const profileMenu =
         document.createElement(
@@ -336,9 +336,25 @@ document.addEventListener(
 
         `;
 
-        navbar.appendChild(
-            profileMenu
+        const navToggle =
+        document.getElementById(
+            "navToggle"
         );
+
+        if (navToggle) {
+
+            navbar.insertBefore(
+                profileMenu,
+                navToggle
+            );
+
+        } else {
+
+            navbar.appendChild(
+                profileMenu
+            );
+
+        }
 
         const navProfileImage =
         document.getElementById(
@@ -395,3 +411,33 @@ document.addEventListener(
 
     }
 );
+
+/* =====================================
+   FORGOT PASSWORD (placeholder)
+   No reset flow exists yet - give honest
+   feedback instead of a silent dead link.
+===================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const forgotLink =
+    document.querySelector(".forgot-link");
+
+    if (!forgotLink) return;
+
+    forgotLink.addEventListener("click", (e) => {
+
+        e.preventDefault();
+
+        if (typeof showToast === "function") {
+
+            showToast(
+                "Password reset isn't available yet. Please contact support.",
+                "info"
+            );
+
+        }
+
+    });
+
+});

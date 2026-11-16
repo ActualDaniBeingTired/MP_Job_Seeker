@@ -28,9 +28,23 @@
     <a href="../html/Registration.html" class="join-btn">
       Join Now
     </a>
-  </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+</nav>
 
   <!-- MAIN CONTACT WRAPPER -->
+  <section class="contact-hero">
+
+    <img
+      src="../banner/ContactBanner.png"
+      class="contact-bg"
+      alt=""
+    >
+
   <main class="contact-container">
       
       <!-- LEFT PROFILE INFO CARD -->
@@ -124,44 +138,73 @@
       </section>
   </main>
 
+  </section>
+
   <!-- FOOTER -->
   <footer>
-    <div class="footer-container">
+
+    <div class="footer-top">
+
+      <div class="footer-brand">
+
+        <h2 class="footer-logo">MP</h2>
+
+        <p>
+          Connecting healthcare professionals with trusted
+          hospitals and institutions across Indonesia.
+        </p>
+
+      </div>
+
       <div class="footer-column">
-        <h3>General</h3>
+
+        <h3>Quick Links</h3>
+
         <a href="../html/HomePage.html">Home</a>
-        <a href="../html/Jobs.html">Jobs</a>
+        <a href="../html/Jobs.html">Browse Jobs</a>
         <a href="../html/AboutUs.html">About Us</a>
         <a href="../html/Contact.html">Contact</a>
+
       </div>
 
       <div class="footer-column">
-        <h3>Browse</h3>
-        <a href="../html/Jobs.html">Jobs</a>
-        <a href="#">Top Companies</a>
-        <a href="#">Top Payments</a>
+
+        <h3>For Job Seekers</h3>
+
+        <a href="../html/Jobs.html">Find a Job</a>
+        <a href="../html/Registration.html">Create Account</a>
+        <a href="../html/SignIn.html">Sign In</a>
+
       </div>
 
-      <div class="footer-column">
-        <h3>About MP</h3>
-        <a href="../html/AboutUs.html">About Us</a>
-        <a href="#">Career</a>
-        <a href="#">Contact Us</a>
+      <div class="footer-column footer-contact">
+
+        <h3>Contact Us</h3>
+
+        <a href="tel:119150">
+          <img src="../Icons/phone-call.png" alt="">
+          119-150
+        </a>
+
+        <a href="mailto:support@medicalportal.id">
+          <img src="../Icons/empty-email.png" alt="">
+          support@medicalportal.id
+        </a>
+
       </div>
 
-      <div class="footer-column">
-        <h3>Contact Center</h3>
-        <div class="contact-box">119-150</div>
-        <div class="contact-box">02891389137923</div>
-      </div>
     </div>
+
+    <div class="footer-bottom">
+
+      <p>&copy; 2026 Medical Portal. All rights reserved.</p>
+
+    </div>
+
   </footer>
 
     <script src="../js/common.js"></script>
-    <script src="../js/homepage.js"></script>
-    <script src="../js/jobs.js"></script>
-    <script src="../js/profile.js"></script>
-    <script src="../js/auth.js"></script> 
+    <script src="../js/auth.js"></script>
 
 </body>
 </html>

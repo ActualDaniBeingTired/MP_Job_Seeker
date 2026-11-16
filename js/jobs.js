@@ -13,9 +13,21 @@ urlParams.get("search") || "";
 const initialLocation =
 urlParams.get("location") || "";
 
-const modal = document.getElementById("jobModal");
-const closeModal = document.querySelector(".close-modal");
+const initialCategory =
+(urlParams.get("category") || "all").toLowerCase();
+
+const jobModal = document.getElementById("jobModal");
+const jobModalCloseBtn = document.querySelector(".close-modal");
 const applyConfirmBtn = document.querySelector(".apply-confirm-btn");
+
+// Tracks which job the apply modal is currently open for,
+// so "Confirm" can actually record an application.
+let pendingApplyJobId = null;
+
+// Pagination: 9 per page lines up with the 3-column grid as a clean 3x3.
+const JOBS_PER_PAGE = 9;
+let currentPage = 1;
+let currentFilteredJobs = [];
 
 /* =========================
    LOAD JSON
@@ -26,6 +38,10 @@ fetch("../data/jobs.json")
     .then(data => {
 
         jobsData = data;
+
+        activeCategory = initialCategory;
+
+        renderCategoryPills();
 
         const searchInput =
         document.getElementById(
@@ -74,11 +90,36 @@ function renderJobs(jobs) {
 
     if (!container) return;
 
-    container.innerHTML = "";
+    if (jobs.length === 0) {
 
-    jobs.forEach((job, index) => {
+        container.innerHTML = `
+            <div class="empty-state">
+                <img src="../Icons/search.png" alt="">
+                <h3>No jobs found</h3>
+                <p>Try adjusting your search or filters to find more opportunities.</p>
+                <button type="button" id="clearFiltersBtn">Clear all filters</button>
+            </div>
+        `;
 
-        container.innerHTML += `
+        const clearBtn =
+        document.getElementById("clearFiltersBtn");
+
+        if (clearBtn) {
+
+            clearBtn.addEventListener("click", clearAllFilters);
+
+        }
+
+        const pagination =
+        document.getElementById("paginationSection");
+
+        if (pagination) pagination.innerHTML = "";
+
+        return;
+
+    }
+
+    const cardsHtml = jobs.map(job => `
 
         <div class="job-card">
 
@@ -87,8 +128,8 @@ function renderJobs(jobs) {
                 <div class="job-icon">
 
                     <img
-                        src="${job.icon}"
-                        alt="${job.title}"
+                        src="${escapeHtml(job.icon)}"
+                        alt="${escapeHtml(job.title)}"
                     >
 
                 </div>
@@ -107,31 +148,31 @@ function renderJobs(jobs) {
 
             </div>
 
-            <h3>${job.title}</h3>
+            <h3>${escapeHtml(job.title)}</h3>
 
             <p class="company-name">
-                ${job.company}
+                ${escapeHtml(job.company)}
             </p>
 
             <div class="job-location">
 
                 <img
-                    src="../Icons/location.png"
+                    src="../Icons/location-pin.png"
                     alt=""
                 >
 
                 <span>
-                    ${job.location}
+                    ${escapeHtml(job.location)}
                 </span>
 
             </div>
 
             <p class="salary">
-                ${job.salary}
+                ${escapeHtml(job.salary)}
             </p>
 
             <p class="experience">
-                ${job.experience}+ Years Experience
+                ${escapeHtml(job.experience)}+ Years Experience
             </p>
 
             <button
@@ -143,12 +184,18 @@ function renderJobs(jobs) {
 
         </div>
 
-        `;
+    `).join("");
 
-    });
+    container.innerHTML = cardsHtml;
 
     attachBookmarks();
     attachApplyButtons();
+
+    if (typeof initScrollReveal === "function") {
+
+        initScrollReveal(".job-card");
+
+    }
 
 }
 
@@ -277,7 +324,149 @@ function filterJobs() {
 
     });
 
-    renderJobs(filteredJobs);
+    currentFilteredJobs = filteredJobs;
+    currentPage = 1;
+
+    renderPage();
+
+}
+
+/* =========================
+   PAGINATION
+========================= */
+
+function renderPage() {
+
+    const start = (currentPage - 1) * JOBS_PER_PAGE;
+    const pageJobs =
+    currentFilteredJobs.slice(
+        start,
+        start + JOBS_PER_PAGE
+    );
+
+    renderJobs(pageJobs);
+    renderPagination();
+
+}
+
+function clearAllFilters() {
+
+    const searchInput = document.getElementById("jobSearch");
+    const locationInput = document.getElementById("locationSearch");
+
+    if (searchInput) searchInput.value = "";
+    if (locationInput) locationInput.value = "";
+
+    document
+    .querySelectorAll(".employment-filter, .experience-filter")
+    .forEach(input => { input.checked = false; });
+
+    activeCategory = "all";
+
+    document
+    .querySelectorAll(".category-pill")
+    .forEach(pill => {
+
+        pill.classList.toggle(
+            "active",
+            pill.dataset.category === "all"
+        );
+
+    });
+
+    filterJobs();
+
+}
+
+function renderPagination() {
+
+    const container =
+    document.getElementById("paginationSection");
+
+    if (!container) return;
+
+    const totalPages =
+    Math.ceil(
+        currentFilteredJobs.length / JOBS_PER_PAGE
+    );
+
+    if (totalPages <= 1) {
+
+        container.innerHTML = "";
+        return;
+
+    }
+
+    let buttonsHtml = `
+        <button class="page-btn page-prev" ${currentPage === 1 ? "disabled" : ""}>
+            &lt;
+        </button>
+    `;
+
+    for (let i = 1; i <= totalPages; i++) {
+
+        buttonsHtml += `
+            <button class="page-btn${i === currentPage ? " active" : ""}" data-page="${i}">
+                ${i}
+            </button>
+        `;
+
+    }
+
+    buttonsHtml += `
+        <button class="page-btn page-next" ${currentPage === totalPages ? "disabled" : ""}>
+            &gt;
+        </button>
+    `;
+
+    container.innerHTML = buttonsHtml;
+
+    container.querySelectorAll(".page-btn[data-page]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+            currentPage = Number(btn.dataset.page);
+            renderPage();
+            container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+        });
+
+    });
+
+    const prevBtn = container.querySelector(".page-prev");
+    const nextBtn = container.querySelector(".page-next");
+
+    if (prevBtn) {
+
+        prevBtn.addEventListener("click", () => {
+
+            if (currentPage > 1) {
+
+                currentPage--;
+                renderPage();
+                container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+            }
+
+        });
+
+    }
+
+    if (nextBtn) {
+
+        nextBtn.addEventListener("click", () => {
+
+            if (currentPage < totalPages) {
+
+                currentPage++;
+                renderPage();
+                container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+            }
+
+        });
+
+    }
 
 }
 
@@ -285,37 +474,77 @@ function filterJobs() {
    CATEGORY FILTER
 ========================= */
 
-document
-.querySelectorAll(".category-pill")
-.forEach(button => {
+function renderCategoryPills() {
 
-    button.addEventListener("click", () => {
+    const container =
+    document.getElementById("categoryPills");
 
-        document
-        .querySelectorAll(".category-pill")
-        .forEach(btn => {
+    if (!container) return;
 
-            btn.classList.remove("active");
+    // Unique categories actually present in the job data,
+    // so a new category in jobs.json shows up here automatically.
+    const categories =
+    [...new Set(
+        jobsData.map(job => job.category)
+    )].sort();
+
+    const pillsHtml =
+    ["all", ...categories].map(cat => {
+
+        const label =
+        cat === "all"
+        ? "All"
+        : escapeHtml(
+            cat.charAt(0).toUpperCase() + cat.slice(1)
+        );
+
+        const isActive =
+        cat === activeCategory
+        ? " active"
+        : "";
+
+        return `
+            <button class="category-pill${isActive}" data-category="${escapeHtml(cat)}">
+                ${label}
+            </button>
+        `;
+
+    }).join("");
+
+    container.innerHTML = pillsHtml;
+
+    attachCategoryPillEvents();
+
+}
+
+function attachCategoryPillEvents() {
+
+    document
+    .querySelectorAll(".category-pill")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            document
+            .querySelectorAll(".category-pill")
+            .forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+            button.classList.add("active");
+
+            activeCategory =
+            button.dataset.category;
+
+            filterJobs();
 
         });
 
-        button.classList.add("active");
-
-        activeCategory =
-        button.textContent
-        .trim()
-        .toLowerCase();
-
-        console.log(
-            "Selected category:",
-            activeCategory
-        );
-
-        filterJobs();
-
     });
 
-});
+}
 
 /* =========================
    SEARCH EVENTS
@@ -375,6 +604,23 @@ function attachBookmarks() {
         )
     ) || [];
 
+    const setBookmarkIcon = (button, isSaved) => {
+
+        const img = button.querySelector("img");
+
+        if (img) {
+
+            img.src =
+            isSaved
+            ? "../Icons/bookmark-filled.png"
+            : "../Icons/bookmark.png";
+
+        }
+
+        button.classList.toggle("saved", isSaved);
+
+    };
+
     document
     .querySelectorAll(
         ".bookmark-btn"
@@ -386,11 +632,7 @@ function attachBookmarks() {
             button.dataset.id
         );
 
-        button.style.opacity =
-
-        savedJobs.includes(id)
-        ? "1"
-        : "0.4";
+        setBookmarkIcon(button, savedJobs.includes(id));
 
         button.onclick = () => {
 
@@ -417,11 +659,12 @@ function attachBookmarks() {
                 )
             );
 
-            button.style.opacity =
+            setBookmarkIcon(button, savedJobs.includes(id));
 
-            savedJobs.includes(id)
-            ? "1"
-            : "0.4";
+            button.classList.remove("pop");
+            // Force reflow so the animation can replay on repeated clicks.
+            void button.offsetWidth;
+            button.classList.add("pop");
 
         };
 
@@ -433,6 +676,31 @@ function attachBookmarks() {
    APPLY BUTTONS
 ========================= */
 
+function populateApplyModal(job) {
+
+    const setText = (id, value) => {
+
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+
+    };
+
+    const icon = document.getElementById("modalJobIcon");
+    if (icon) icon.src = job.icon;
+
+    setText("modalJobTitle", job.title);
+    setText("modalJobCompany", job.company);
+    setText("modalJobLocation", job.location);
+    setText("modalJobSalary", job.salary);
+    setText("modalJobEmployment", job.employment);
+
+    setText(
+        "modalJobExperience",
+        `${job.experience}+ Years Experience`
+    );
+
+}
+
 function attachApplyButtons() {
 
     document
@@ -443,9 +711,23 @@ function attachApplyButtons() {
 
         button.onclick = () => {
 
-            if (modal) {
+            pendingApplyJobId =
+            Number(button.dataset.id);
 
-                modal.classList.add(
+            const job =
+            jobsData.find(
+                j => j.id === pendingApplyJobId
+            );
+
+            if (job) {
+
+                populateApplyModal(job);
+
+            }
+
+            if (jobModal) {
+
+                jobModal.classList.add(
                     "active"
                 );
 
@@ -461,11 +743,11 @@ function attachApplyButtons() {
    MODAL
 ========================= */
 
-if (closeModal) {
+if (jobModalCloseBtn) {
 
-    closeModal.onclick = () => {
+    jobModalCloseBtn.onclick = () => {
 
-        modal.classList.remove(
+        jobModal.classList.remove(
             "active"
         );
 
@@ -478,10 +760,10 @@ window.addEventListener(
     (e) => {
 
         if (
-            e.target === modal
+            e.target === jobModal
         ) {
 
-            modal.classList.remove(
+            jobModal.classList.remove(
                 "active"
             );
 
@@ -494,11 +776,55 @@ if (applyConfirmBtn) {
 
     applyConfirmBtn.onclick = () => {
 
-        alert(
-            "Application submitted successfully!"
+        const job =
+        jobsData.find(
+            j => j.id === pendingApplyJobId
         );
 
-        modal.classList.remove(
+        if (job) {
+
+            const applications =
+            JSON.parse(
+                localStorage.getItem(
+                    "applications"
+                )
+            ) || [];
+
+            const alreadyApplied =
+            applications.some(
+                app => app.jobId === job.id
+            );
+
+            if (!alreadyApplied) {
+
+                applications.push({
+                    jobId: job.id,
+                    jobTitle: job.title,
+                    company: job.company,
+                    location: job.location,
+                    salary: job.salary,
+                    status: "Pending",
+                    appliedDate:
+                    new Date().toISOString()
+                });
+
+                localStorage.setItem(
+                    "applications",
+                    JSON.stringify(applications)
+                );
+
+            }
+
+        }
+
+        showToast(
+            "Application submitted successfully!",
+            "success"
+        );
+
+        pendingApplyJobId = null;
+
+        jobModal.classList.remove(
             "active"
         );
 

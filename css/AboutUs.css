@@ -12,10 +12,11 @@
 .hero-content {
     max-width: 800px;
     margin: 0 auto;
+    animation: fadeInUp 0.7s ease both;
 }
 
 .hero-content h1 {
-    font-size: 48px;
+    font-size: clamp(32px, 4.5vw, 48px);
     font-weight: 700;
     margin-bottom: 25px;
     letter-spacing: -0.5px;
@@ -92,7 +93,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 25px;
+    margin: 0 auto 25px auto;
     color: #2F666A;
 }
 
@@ -106,6 +107,7 @@
     color: #1A3B3D;
     font-weight: 600;
     margin-bottom: 15px;
+    text-align: center;
 }
 
 .card p {
@@ -114,50 +116,8 @@
     line-height: 1.6;
 }
 
-/* Carousel Side Arrow UI Component */
-.carousel-arrow {
-    position: absolute;
-    right: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 50px;
-    height: 50px;
-    background: #FFFFFF;
-    border: 1px solid #EBF0F2;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #2F666A;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 5;
-}
-
-.carousel-arrow:hover {
-    background: #2F666A;
-    color: #FFFFFF;
-    transform: translateY(-50%) scale(1.05);
-}
-
-.carousel-arrow svg {
-    width: 20px;
-    height: 20px;
-}
-
 /* Responsive Scaling for Layout Breakpoints */
-@media (max-width: 992px) {
-    .carousel-arrow {
-        display: none; /* Hides floating decoration arrow on smaller tablet views */
-    }
-}
-
 @media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 36px;
-    }
-    
     .commitment-section {
         padding: 60px 5%;
     }

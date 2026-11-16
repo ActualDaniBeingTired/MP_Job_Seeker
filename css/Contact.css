@@ -1,13 +1,30 @@
 /* CONTACT PAGE INTERFACE STYLES */
 
 /* Main Two-Column Structure layout grid definitions */
+.contact-hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    z-index: 0;
+}
+
 .contact-container {
+    position: relative;
+    z-index: 1;
     display: flex;
     max-width: 1300px;
     margin: 40px auto 80px auto;
     padding: 0 4%;
     gap: 40px;
-    align-items: flex-start;
+    align-items: stretch;
 }
 
 /* Left-Side Profile Box Styling */
@@ -214,9 +231,15 @@
 @media (max-width: 915px) {
     .contact-container {
         flex-direction: column;
+        align-items: stretch;
         margin: 20px auto 60px auto;
     }
-    
+
+    .info-sidebar,
+    .content-panel {
+        flex: none;
+    }
+
     .info-sidebar {
         width: 100%;
     }
